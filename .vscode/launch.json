@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "coreclr",
+      "request": "launch",
+      "name": "Launch AppHost",
+      "program": "${workspaceFolder}/src/PatientApp.Aspire.AppHost/bin/Debug/net8.0/PatientApp.Aspire.AppHost.dll",
+      "cwd": "${workspaceFolder}/src/PatientApp.Aspire.AppHost"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/API/" />
+  <Folder Name="/_Aspire/">
+    <Project Path="PatientApp.Aspire.AppHost/PatientApp.Aspire.AppHost.csproj" />
+    <Project Path="PatientApp.Aspire.ServiceDefaults/PatientApp.Aspire.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/_SolutionFiles/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Packages.props" />
+  </Folder>  
+</Solution>
