@@ -1,9 +1,9 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/api/">
-    <Project Path="api/PatientService/PatientService/PatientService.csproj" />
+    
   </Folder>
-  <Folder Name="/src/api/PatientService/" />
+  <Folder Name="/src/api/PatientService/" ><Project Path="api/PatientService/PatientService/PatientService.csproj" /></Folder>
   <Folder Name="/src/_aspire/">
     <Project Path="PatientApp.Aspire.AppHost/PatientApp.Aspire.AppHost.csproj" />
     <Project Path="PatientApp.Aspire.ServiceDefaults/PatientApp.Aspire.ServiceDefaults.csproj" />
