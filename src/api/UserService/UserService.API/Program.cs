@@ -1,17 +1,24 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+using Scalar.AspNetCore;
 
 using UserService.API.Data;
 using UserService.API.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.AddServiceDefaults();
+builder.AddSqlServerDbContext<AppDbContext>("PatientApp");
 
-builder.Services.AddDbContext<AppDbContext>()
-                .AddIdentity<ApplicationUser, IdentityRole>();
+
+builder.Services.AddOpenApi();
+
+builder.AddServiceDefaults(); //Aspire
+
+// builder.Services.AddDbContext<AppDbContext>(o =>
+//                     o.UseSqlServer(builder.Configuration.GetConnectionString("UserServiceDb")));
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
 
@@ -19,7 +26,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapIdentityApi<ApplicationUser>();
 
 app.UseHttpsRedirection();
 app.MapDefaultEndpoints();
