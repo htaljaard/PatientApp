@@ -1,26 +1,30 @@
+using FastEndpoints;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using Scalar.AspNetCore;
 
+using UserService.API;
 using UserService.API.Data;
 using UserService.API.Domain;
 using UserService.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddSqlServerDbContext<AppDbContext>("PatientApp");
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
 
 builder.Services.AddOpenApi();
+builder.Services.AddFastEndpoints();
 
 builder.Services.AddAuthorization();
 
 
 builder.AddServiceDefaults(); //Aspire
 
-// builder.Services.AddDbContext<AppDbContext>(o =>
-//                     o.UseSqlServer(builder.Configuration.GetConnectionString("UserServiceDb")));
+builder.AddSqlServerDbContext<AppDbContext>("PatientApp");
+
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>,FakeEmailSender>();
 
@@ -38,7 +42,8 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapIdentityApi<ApplicationUser>();
+//app.MapIdentityApi<ApplicationUser>();
+app.UseFastEndpoints();
 
 app.UseHttpsRedirection();
 app.MapDefaultEndpoints();

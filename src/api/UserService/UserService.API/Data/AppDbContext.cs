@@ -7,7 +7,7 @@ using UserService.API.Domain;
 
 namespace UserService.API.Data;
 
-public class AppDbContext : IdentityDbContext<ApplicationUser>
+internal sealed class AppDbContext : IdentityDbContext<ApplicationUser>
 {
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 

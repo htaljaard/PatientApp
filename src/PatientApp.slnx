@@ -6,6 +6,7 @@
   <Folder Name="/src/api/PatientService/">
     <Project Path="api/PatientService/PatientService/PatientService.API.csproj" />
   </Folder>
+  <Folder Name="/src/api/Shared/" />
   <Folder Name="/src/api/UserService/">
     <Project Path="api/UserService/UserService.API/UserService.API.csproj" />
   </Folder>
