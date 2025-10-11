@@ -25,12 +25,20 @@ builder.AddServiceDefaults(); //Aspire
 
 builder.AddSqlServerDbContext<AppDbContext>("PatientApp");
 
-
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>,FakeEmailSender>();
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddRoleManager<RoleManager<IdentityRole>>()
+    .AddUserManager<UserManager<ApplicationUser>>()
+    .AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await IdentitySeeder.SeedRolesAsync(services);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

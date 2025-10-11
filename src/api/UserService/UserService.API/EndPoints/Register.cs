@@ -35,12 +35,18 @@ internal sealed class Register(UserManager<ApplicationUser> userManager, ILogger
 
         try
         {
-            IdentityResult newUserRequest = await _userManager.CreateAsync(new ApplicationUser {
-            Email = req.Email,
-            UserName = req.Email
+            IdentityResult newUserRequest = await _userManager.CreateAsync(new ApplicationUser
+            {
+                Email = req.Email,
+                UserName = req.Email
             }, req.Password);
-            if(newUserRequest.Succeeded)
+
+
+            if (newUserRequest.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "User");
                 await Send.ResultAsync(TypedResults.Ok(new RegisterResponse(true)));
+            }
             else
                 await Send.ResultAsync(TypedResults.BadRequest(newUserRequest.Errors.FirstOrDefault()));
 
@@ -48,7 +54,7 @@ internal sealed class Register(UserManager<ApplicationUser> userManager, ILogger
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while registering user");
-            
+
             throw;
         }
     }
