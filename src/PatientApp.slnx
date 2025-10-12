@@ -9,6 +9,7 @@
   <Folder Name="/src/api/Shared/" />
   <Folder Name="/src/api/UserService/">
     <Project Path="api/UserService/UserService.API/UserService.API.csproj" />
+    <Project Path="api/UserService/UserService.API.Tests/UserService.API.Tests.csproj" />
   </Folder>
   <Folder Name="/src/_aspire/">
     <Project Path="PatientApp.Aspire.AppHost/PatientApp.Aspire.AppHost.csproj" />
