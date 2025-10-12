@@ -4,3 +4,4 @@
 
 /src/.vs
 /.vs
+/tests/UserService.Tests.Integration/obj
