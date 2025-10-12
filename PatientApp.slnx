@@ -1,0 +1,27 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/api/">
+    
+  </Folder>
+  <Folder Name="/src/api/PatientService/">
+    <Project Path="src/api/PatientService/PatientService/PatientService.API.csproj" />
+  </Folder>
+  <Folder Name="/src/api/UserService/">
+    <Project Path="src/api/UserService/UserService.API/UserService.API.csproj" />
+  </Folder>
+  <Folder Name="/src/_aspire/">
+    <Project Path="src/PatientApp.Aspire.AppHost/PatientApp.Aspire.AppHost.csproj" />
+    <Project Path="src/PatientApp.Aspire.ServiceDefaults/PatientApp.Aspire.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/src/_solutionfiles/">
+    <File Path="src/.editorconfig" />
+    <File Path="src/.gitignore" />
+    <File Path="src/Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Aspire/" />
+  <Folder Name="/tests/UserService/">
+    <Project Path="tests/UserService.Tests.Integration/UserService.Tests.Integration.csproj" Id="65928a76-5e46-40a7-9877-905b5c5f04f8" />
+  </Folder>
+
+</Solution>
