@@ -1,4 +1,9 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/api/">
     
@@ -22,7 +27,6 @@
   <Folder Name="/tests/Aspire/" />
   <Folder Name="/tests/UserService/">
     <Project Path="tests/UserService.Tests.Integration/UserService.Tests.Integration.csproj" Id="65928a76-5e46-40a7-9877-905b5c5f04f8" />
-    <Project Path="tests/UserService.Tests.Unit/UserService.Tests.Unit.csproj" />
   </Folder>
 
 </Solution>
