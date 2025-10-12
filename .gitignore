@@ -5,3 +5,6 @@
 /src/.vs
 /.vs
 /tests/UserService.Tests.Integration/obj
+/tests/UserService.Tests.Integration/bin
+/tests/UserService.Tests.Unit/obj
+/tests/UserService.Tests.Unit/bin
