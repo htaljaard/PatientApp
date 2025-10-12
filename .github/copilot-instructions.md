@@ -16,6 +16,8 @@ PatientApp is an AI-driven Patient Management System (PMS) designed as a SaaS, m
 - **Authentication**: ASP.NET Identity with JWT tokens
 - **Testing**: xUnit, FluentAssertions
 - **API Documentation**: Scalar for OpenAPI/Swagger
+- **Mocking Library**: NSubstitute
+- **Test Assertions**: Regular .NET assertions **NOT FLUENT ASSERTIONS**
 
 ### Azure Services
 - Azure SQL Database
