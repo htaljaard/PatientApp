@@ -1,9 +1,12 @@
 # C# formatting: wrap long lines and align method chains
 [*.cs]
-csharp_new_line_before_members_in_object_initializers = true
-csharp_new_line_before_open_brace = all
-csharp_preserve_single_line_statements = false
-csharp_preserve_single_line_blocks = false
+# Keep property/accessor braces on the same line
+csharp_new_line_before_members_in_object_initializers = false
+# Put open brace on new line for types and methods, but NOT for properties nor accessors so properties stay inline
+csharp_new_line_before_open_brace = types, methods, anonymous_methods, control_blocks, anonymous_types, object_collection_array_initializers, lambda_expression_body
+# Preserve existing single-line statements and blocks so formatters will keep inline properties/accessors
+csharp_preserve_single_line_statements = true
+csharp_preserve_single_line_blocks = true
 csharp_indent_method_chain = true
 csharp_indent_labels = one_less_than_current
 csharp_using_directive_placement = outside_namespace:silent
@@ -23,6 +26,8 @@ csharp_style_expression_bodied_accessors = true:silent
 csharp_style_expression_bodied_lambdas = true:suggestion
 csharp_style_expression_bodied_local_functions = false:silent
 csharp_style_throw_expression = true:suggestion
+# Keep accessors on the same line (e.g. "public int X { get; set; }")
+csharp_new_line_between_accessors = false
 
 [*.{cs,vb}]
 #### Naming styles ####
@@ -72,8 +77,8 @@ dotnet_naming_style.pascal_case.required_suffix =
 dotnet_naming_style.pascal_case.word_separator = 
 dotnet_naming_style.pascal_case.capitalization = pascal_case
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
-tab_width = 4
-indent_size = 4
+tab_width =4
+indent_size =4
 end_of_line = crlf
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
