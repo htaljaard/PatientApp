@@ -1,8 +1,14 @@
-﻿namespace PatientService.API.Domain;
+﻿using PatientApp.SharedKernel.Results;
 
-public sealed class MedicalAidDetails
+namespace PatientService.API.Domain;
+
+internal sealed class MedicalAidDetails
 {
     public string? MedicareCardNumber { get; set; }
     public int MedicareCardReferenceNumber { get; set; }
+
+    List<PrivateHealthFundAccount> PrivateHealtMedicalAidAccounts { get; } = new();
+
+    public static Result<PrivateHealthFundAccount>
 
 }

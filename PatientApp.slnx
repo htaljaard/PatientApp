@@ -14,6 +14,9 @@
   <Folder Name="/src/api/UserService/">
     <Project Path="src/api/UserService/UserService.API/UserService.API.csproj" />
   </Folder>
+  <Folder Name="/src/Shared/">
+    <Project Path="src/shared/SharedKernel/SharedKernel.csproj" Id="e45c8535-86d8-4638-bf79-77068ecfa0cf" />
+  </Folder>
   <Folder Name="/src/_aspire/">
     <Project Path="src/PatientApp.Aspire.AppHost/PatientApp.Aspire.AppHost.csproj" />
     <Project Path="src/PatientApp.Aspire.ServiceDefaults/PatientApp.Aspire.ServiceDefaults.csproj" />

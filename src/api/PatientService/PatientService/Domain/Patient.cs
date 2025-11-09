@@ -1,6 +1,6 @@
 ﻿namespace PatientService.API.Domain;
 
-public sealed class Patient
+internal sealed class Patient
 {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
