@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace PatientApp.SharedKernel.Domain;
 public interface IHasDomainEvent
 {
-    List<DomainEvent> DomainEvents { get; }
-    void AddDomainEvent(DomainEvent domainEvent);
+    List<IDomainEvent> DomainEvents { get; }
+    void AddDomainEvent(IDomainEvent domainEvent);
     void ClearDomainEvents();
 }

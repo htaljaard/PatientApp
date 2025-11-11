@@ -1,6 +1,7 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,13 +27,11 @@ var jwtAudience = builder.Configuration["Jwt:Audience"];
 ArgumentNullException.ThrowIfNullOrWhiteSpace(jwtKey, "JWT Key is not configured.");
 
 
-builder.Services.AddAuthentication(options =>
-{
+builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddJwtBearer(options =>
-{
+.AddJwtBearer(options => {
     options.RequireHttpsMetadata = true;
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
@@ -51,8 +50,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Require authenticated users by default for endpoints and add a policy for patients
-builder.Services.AddAuthorization(options =>
-{
+builder.Services.AddAuthorization(options => {
     options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
@@ -67,6 +65,8 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddSingleton(new ActivitySource("PatientApp.PatientService", "1.0.0"));
 
 var app = builder.Build();
 

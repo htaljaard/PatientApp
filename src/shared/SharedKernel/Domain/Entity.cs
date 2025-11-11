@@ -11,9 +11,9 @@ public class Entity : IHasDomainEvent
 {
     public Guid Id { get; set; } = Guid.CreateVersion7();
 
-    public List<DomainEvent> DomainEvents { get; } = new();
+    public List<IDomainEvent> DomainEvents { get; } = new();
 
-    public void AddDomainEvent(DomainEvent domainEvent)
+    public void AddDomainEvent(IDomainEvent domainEvent)
     {
         DomainEvents.Add(domainEvent);
     }

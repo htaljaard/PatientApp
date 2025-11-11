@@ -5,4 +5,4 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PatientApp.SharedKernel.Events;
-public record DomainEvent(string Name, string Payload);
+public interface IDomainEvent { };

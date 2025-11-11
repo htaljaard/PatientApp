@@ -16,7 +16,7 @@ internal sealed class PatientDBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PatientDBContext).Assembly);
-        modelBuilder.HasDefaultSchema("patientservice");
+        modelBuilder.HasDefaultSchema("patient");
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
