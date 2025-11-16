@@ -11,7 +11,10 @@ internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> 
 {
     public async Task<Patient> AddAsync(Patient entity)
     {
-        var span = tracer.StartSpan("SQLRepository.AddAsync");
+        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.AddAsync")!;
+        activity.AddTag("patient.id", entity.Id.ToString());
+        activity.AddTag("patient.email", entity.Email);
+
         try
         {
             var newPatient = await dbContext.AddAsync(entity);
@@ -22,19 +25,33 @@ internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> 
 
             logger.LogError("Error occured saving patient with id: {Id}", entity.Id);
             logger.LogError("Exception: {Exception}", ex.ToString());
-            span.SetStatus(Status.Error.WithDescription(ex.Message));
+            activity.SetStatus(Status.Error.WithDescription(ex.Message));
             throw;
         }
     }
 
     public Task<bool> DeleteAsync(Patient entity)
     {
-        throw new NotImplementedException();
+        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.DeleteAsync")!;
+
+        activity.AddTag("patient.id", entity.Id.ToString());
+        try
+        {
+            dbContext.Remove(entity);
+            return Task.FromResult(true);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Error occured deleting patient with id: {Id}", entity.Id);
+            logger.LogError("Exception: {Exception}", ex.ToString());
+            activity.SetStatus(Status.Error.WithDescription(ex.Message));
+            throw;
+        }
     }
 
     public async Task<Result<bool>> SaveChangesAsync()
     {
-        var activity = Activity.Current ??  source.StartActivity("SQLRepository.SaveChangesAsync")!;
+        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.SaveChangesAsync")!;
 
         activity.AddEvent(new ActivityEvent("SQLRepository.SaveChangesAsync started"));
         try
@@ -52,17 +69,45 @@ internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> 
 
     public Task<Patient> UpdateAsync(Patient entity)
     {
-        throw new NotImplementedException();
+        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.UpdateAsync")!;
+        activity.AddTag("patient.id", entity.Id.ToString());
+        try
+        {
+            var updatedPatient = dbContext.Update(entity);
+            return Task.FromResult(updatedPatient.Entity);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Error occured updating patient with id: {Id}", entity.Id);
+            logger.LogError("Exception: {Exception}", ex.ToString());
+            activity.SetStatus(Status.Error.WithDescription(ex.Message));
+            throw;
+        }
     }
 
     Task<IEnumerable<Patient>> IReadOnlyRepository<Patient>.GetAllAsync()
     {
         throw new NotImplementedException();
+        //This is not needed at this stage
     }
 
     Task<Patient?> IReadOnlyRepository<Patient>.GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.GetByIdAsync")!;
+
+        activity.AddTag("patient.id", id.ToString());
+        try
+        {
+            var patient = dbContext.Patients.Find(id);
+            return Task.FromResult(patient);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Error occured retrieving patient with id: {Id}", id);
+            logger.LogError("Exception: {Exception}", ex.ToString());
+            activity.SetStatus(Status.Error.WithDescription(ex.Message));
+            throw;
+        }
     }
 
 
