@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\api\PatientService\PatientService\PatientService.API.csproj" />
     <ProjectReference Include="..\api\UserService\UserService.API\UserService.API.csproj" />
   </ItemGroup>
 

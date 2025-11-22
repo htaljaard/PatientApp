@@ -4,14 +4,16 @@ using PatientApp.SharedKernel.Domain.Repository;
 using PatientApp.SharedKernel.Results;
 using PatientService.API.Domain.Entities;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using PatientService.API.Domain.Repositories;
 
 namespace PatientService.API.Data.Repositories;
 
-internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> logger, Tracer tracer, ActivitySource source) : IRepository<Patient>, IReadOnlyRepository<Patient>
+internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> logger, Tracer tracer, ActivitySource source) : IRepository<Patient>, IPatientReadOnlyRepository
 {
     public async Task<Patient> AddAsync(Patient entity)
     {
-        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.AddAsync")!;
+        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.AddAsync")!;
         activity.AddTag("patient.id", entity.Id.ToString());
         activity.AddTag("patient.email", entity.Email);
 
@@ -91,9 +93,33 @@ internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> 
         //This is not needed at this stage
     }
 
+    public async Task<Result<Patient>> GetByEmailAsync(string email, CancellationToken ct)
+    {
+        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.GetByEmailAsync")!;
+
+        activity.AddTag("patient.email", email);
+        try
+        {
+            var patient = await dbContext.Patients.FirstOrDefaultAsync(p => p.Email == email, cancellationToken: ct);
+            if (patient == null)
+            {
+                return new Error("Patient not found");
+            }
+
+            return patient;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Error occured retrieving patient with email: {Email}", email);
+            logger.LogError("Exception: {Exception}", ex.ToString());
+            activity.SetStatus(Status.Error.WithDescription(ex.Message));
+            throw;
+        }
+    }
+
     Task<Patient?> IReadOnlyRepository<Patient>.GetByIdAsync(Guid id)
     {
-        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.GetByIdAsync")!;
+        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.GetByIdAsync")!;
 
         activity.AddTag("patient.id", id.ToString());
         try

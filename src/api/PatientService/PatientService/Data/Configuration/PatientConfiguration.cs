@@ -9,6 +9,7 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
     void IEntityTypeConfiguration<Patient>.Configure(EntityTypeBuilder<Patient> builder)
     {
         builder.HasKey(p => p.Id);
+        builder.HasIndex(p => p.Email).IsUnique();
 
         builder.HasOne(p => p.MedicalAidDetails)
                .WithOne()

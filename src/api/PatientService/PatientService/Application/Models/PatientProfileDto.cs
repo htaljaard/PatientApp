@@ -1,5 +1,3 @@
 ﻿namespace PatientService.API.Application.Models;
 
-public class PatientProfileDto
-{
-}
+public record PatientProfileDto(string Name, string Surname, string Email);
