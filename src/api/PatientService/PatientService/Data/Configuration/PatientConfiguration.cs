@@ -18,7 +18,7 @@ public class PatientConfiguration : IEntityTypeConfiguration<Patient>
 
         builder.HasIndex(p => p.Email)
                .IsUnique();
-
+ 
 
     }
 }
