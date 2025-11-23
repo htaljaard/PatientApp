@@ -35,7 +35,7 @@ internal sealed class Register(UserManager<ApplicationUser> userManager, ILogger
 
         try
         {
-            IdentityResult newUserRequest = await _userManager.CreateAsync(new ApplicationUser
+            var newUserRequest = await _userManager.CreateAsync(new ApplicationUser
             {
                 Email = req.Email,
                 UserName = req.Email
@@ -44,7 +44,8 @@ internal sealed class Register(UserManager<ApplicationUser> userManager, ILogger
 
             if (newUserRequest.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "User");
+                user = await _userManager.FindByEmailAsync(req.Email!);
+                await _userManager.AddToRoleAsync(user!, "User");
                 await Send.ResultAsync(TypedResults.Ok(new RegisterResponse(true)));
             }
             else

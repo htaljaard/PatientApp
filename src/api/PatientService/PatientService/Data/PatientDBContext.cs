@@ -13,6 +13,10 @@ internal sealed class PatientDBContext : DbContext
 
     public DbSet<MedicalAidDetails> MedicalAidDetails { get; set; }
 
+    public PatientDBContext(DbContextOptions<PatientDBContext> options) : base(options)
+    {
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PatientDBContext).Assembly);
@@ -36,9 +40,10 @@ internal sealed class PatientDBContext : DbContext
             {
                 var eventType = domainEvent.GetType();
                 var outboxMessage = new OutboxMessage<IDomainEvent>(domainEvent);
-                
+
                 outboxEntries.Add(outboxMessage);
             }
+
             entity.ClearDomainEvents();
         }
 
@@ -46,6 +51,4 @@ internal sealed class PatientDBContext : DbContext
 
         return base.SaveChangesAsync(cancellationToken);
     }
-
-
 }

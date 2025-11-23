@@ -1,10 +1,7 @@
 using FastEndpoints;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
 using Scalar.AspNetCore;
-
 using UserService.API;
 using UserService.API.Data;
 using UserService.API.Domain;
@@ -23,9 +20,9 @@ builder.Services.AddAuthorization();
 
 builder.AddServiceDefaults(); //Aspire
 
-builder.AddSqlServerDbContext<AppDbContext>("PatientApp");
+builder.AddNpgsqlDbContext<AppDbContext>(connectionName:"PatientApp");
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>,FakeEmailSender>();
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, FakeEmailSender>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddRoleManager<RoleManager<IdentityRole>>()
@@ -57,4 +54,3 @@ app.UseHttpsRedirection();
 app.MapDefaultEndpoints();
 
 app.Run();
-

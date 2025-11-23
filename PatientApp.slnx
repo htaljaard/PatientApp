@@ -21,11 +21,6 @@
     <Project Path="src/PatientApp.Aspire.AppHost/PatientApp.Aspire.AppHost.csproj" />
     <Project Path="src/PatientApp.Aspire.ServiceDefaults/PatientApp.Aspire.ServiceDefaults.csproj" />
   </Folder>
-  <Folder Name="/src/_solutionfiles/">
-    <File Path="src/.editorconfig" />
-    <File Path="src/.gitignore" />
-    <File Path="src/Directory.Packages.props" />
-  </Folder>
   <Folder Name="/tests/" />
   <Folder Name="/tests/Aspire/" />
   <Folder Name="/tests/UserService/">
