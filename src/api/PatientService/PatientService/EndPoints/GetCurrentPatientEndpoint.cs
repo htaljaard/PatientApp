@@ -5,9 +5,11 @@ using PatientService.API.Application.UseCases.GetPatientProfileForCurrentUser;
 using System.Security.Claims;
 using ProblemDetails = FastEndpoints.ProblemDetails;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PatientService.API.EndPoints;
 
+[Authorize(policy:"IsPatient")]
 public sealed class GetCurrentPatientEndpoint(ActivitySource activitySource, ILogger<GetCurrentPatientEndpoint> logger)
     : EndpointWithoutRequest<
         Results<Ok<PatientProfileDto>, BadRequest, NotFound, ProblemDetails, UnauthorizedHttpResult>>
@@ -15,7 +17,6 @@ public sealed class GetCurrentPatientEndpoint(ActivitySource activitySource, ILo
     public override void Configure()
     {
         Get("api/patient/me");
-        Roles("Patient");
     }
 
     public override async

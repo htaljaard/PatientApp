@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +40,10 @@ public static class Extensions
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
         });
-
+        
+        string serviceName = builder.Configuration["OTEL_SERVICE_NAME"] ?? "PatientApp.UnknownService";
+        builder.Services.AddSingleton(new ActivitySource(serviceName));
+        
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics => {
                 metrics.AddAspNetCoreInstrumentation()
@@ -48,7 +52,7 @@ public static class Extensions
             })
             .WithTracing(tracing => {
                 tracing
-                    .AddSource("PatientApp.PatientService") // Replace with your service's source name
+                    .AddSource(serviceName) // Replace with your service's source name
                     .AddAspNetCoreInstrumentation()
                     // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
                     //.AddGrpcClientInstrumentation()

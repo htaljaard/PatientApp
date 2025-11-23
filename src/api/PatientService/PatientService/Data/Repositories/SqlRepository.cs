@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using OpenTelemetry.Trace;
+﻿using OpenTelemetry.Trace;
 using PatientApp.SharedKernel.Domain.Repository;
 using PatientApp.SharedKernel.Results;
 using PatientService.API.Domain.Entities;
@@ -9,7 +8,8 @@ using PatientService.API.Domain.Repositories;
 
 namespace PatientService.API.Data.Repositories;
 
-internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> logger, Tracer tracer, ActivitySource source) : IRepository<Patient>, IPatientReadOnlyRepository
+internal class SqlRepository(PatientDBContext dbContext, ILogger<SqlRepository> logger, ActivitySource source) 
+    : IRepository<Patient>, IPatientReadOnlyRepository
 {
     public async Task<Patient> AddAsync(Patient entity)
     {
@@ -34,7 +34,7 @@ internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> 
 
     public Task<bool> DeleteAsync(Patient entity)
     {
-        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.DeleteAsync")!;
+        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.DeleteAsync")!;
 
         activity.AddTag("patient.id", entity.Id.ToString());
         try
@@ -53,7 +53,7 @@ internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> 
 
     public async Task<Result<bool>> SaveChangesAsync()
     {
-        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.SaveChangesAsync")!;
+        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.SaveChangesAsync")!;
 
         activity.AddEvent(new ActivityEvent("SQLRepository.SaveChangesAsync started"));
         try
@@ -71,7 +71,7 @@ internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> 
 
     public Task<Patient> UpdateAsync(Patient entity)
     {
-        var activity = Activity.Current ?? source.StartActivity("PatientService.Repository.UpdateAsync")!;
+        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.UpdateAsync")!;
         activity.AddTag("patient.id", entity.Id.ToString());
         try
         {
@@ -100,7 +100,8 @@ internal class SQLRepository(PatientDBContext dbContext, ILogger<SQLRepository> 
         activity.AddTag("patient.email", email);
         try
         {
-            var patient = await dbContext.Patients.FirstOrDefaultAsync(p => p.Email == email, cancellationToken: ct);
+            var patient = await dbContext.Patients.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Email == email, cancellationToken: ct);
             if (patient == null)
             {
                 return new Error("Patient not found");
