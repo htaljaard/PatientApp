@@ -1,6 +1,7 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PatientApp.SharedKernel.Auth;
 using Scalar.AspNetCore;
 using UserService.API;
 using UserService.API.Data;

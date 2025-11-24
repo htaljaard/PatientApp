@@ -4,21 +4,25 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using PatientService.API.Data;
+using PatientService.API.Data.Repositories;
+using PatientService.API.Domain.Repositories;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddNpgsqlDbContext<PatientDBContext>(connectionName: "PatientApp");
+builder.AddNpgsqlDbContext<PatientDbContext>(connectionName: "PatientApp");
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddFastEndpoints();
 builder.AddServiceDefaults();
 
-builder.Services.AddFastEndpoints();
 
-var jwtKey = builder.Configuration["Jwt__Key"];
-var jwtIssuer = builder.Configuration["Jwt__Issuer"];
-var jwtAudience = builder.Configuration["Jwt__Audience"];
+
+var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
 
 ArgumentException.ThrowIfNullOrWhiteSpace(jwtKey, "JWT Key is not configured.");
 
@@ -47,10 +51,10 @@ builder.Services.AddAuthentication(options => {
 
 // Require authenticated users by default for endpoints and add a policy for patients
 builder.Services.AddAuthorization(options => {
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-        .Build();
+    // options.FallbackPolicy = new AuthorizationPolicyBuilder()
+    //     .RequireAuthenticatedUser()
+    //     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+    //     .Build();
 
     // Policy that requires the user to have the "Patient" role
     options.AddPolicy("IsPatient", policy =>
@@ -62,12 +66,15 @@ builder.Services.AddAuthorization(options => {
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<IPatientReadOnlyRepository, PatientNpgRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseAuthentication();

@@ -1,4 +1,4 @@
-namespace UserService.API;
+namespace PatientApp.SharedKernel.Auth;
 
 public class JwtOptions
 {

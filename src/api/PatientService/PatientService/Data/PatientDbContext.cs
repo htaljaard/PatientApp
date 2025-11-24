@@ -7,19 +7,19 @@ using System.Text.Json;
 
 namespace PatientService.API.Data;
 
-internal sealed class PatientDBContext : DbContext
+internal sealed class PatientDbContext : DbContext
 {
     public DbSet<Patient> Patients { get; set; }
 
     public DbSet<MedicalAidDetails> MedicalAidDetails { get; set; }
 
-    public PatientDBContext(DbContextOptions<PatientDBContext> options) : base(options)
+    public PatientDbContext(DbContextOptions<PatientDbContext> options) : base(options)
     {
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PatientDBContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PatientDbContext).Assembly);
         modelBuilder.HasDefaultSchema("patient");
     }
 

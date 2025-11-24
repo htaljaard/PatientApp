@@ -8,7 +8,7 @@ using PatientService.API.Domain.Repositories;
 
 namespace PatientService.API.Data.Repositories;
 
-internal class SqlRepository(PatientDBContext dbContext, ILogger<SqlRepository> logger, ActivitySource source) 
+internal class PatientNpgRepository(PatientDbContext dbContext, ILogger<PatientNpgRepository> logger, ActivitySource source) 
     : IRepository<Patient>, IPatientReadOnlyRepository
 {
     public async Task<Patient> AddAsync(Patient entity)

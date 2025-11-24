@@ -1,0 +1,12 @@
+﻿//Login
+@url = https://localhost:7238/
+@token = 
+
+POST {{url}}/api/login
+Content-Type: application/json
+#Authorization: Bearer {{token}}
+
+{
+  "username": "Hein@test.com",
+  "password": "Ragnar0k687!"
+}

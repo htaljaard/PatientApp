@@ -10,10 +10,15 @@ var creationScript = $$"""
 
                        """;
 
+#pragma warning disable ASPIREPROXYENDPOINTS001
 var dbServer = builder
     .AddPostgres("postgres")
+    .WithHostPort(5432)
     .WithPgAdmin()
     .WithPgWeb()
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithEndpointProxySupport(false)
+#pragma warning restore ASPIREPROXYENDPOINTS001
     .WithDataVolume("patientapp-data")
     .WithPassword(password);
 var db = dbServer.AddDatabase(databaseName).WithCreationScript(creationScript);

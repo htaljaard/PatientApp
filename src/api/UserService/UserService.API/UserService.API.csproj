@@ -32,4 +32,8 @@
     <ProjectReference Include="..\..\..\shared\SharedKernel\SharedKernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
