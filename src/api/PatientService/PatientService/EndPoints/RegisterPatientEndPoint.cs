@@ -22,20 +22,16 @@ public class RegisterPatientEndPoint (IHttpContextAccessor httpContextAccessor,I
     {
         var actity = source.StartActivity($"{nameof(RegisterPatientEndPoint)}.{nameof(ExecuteAsync)}", ActivityKind.Server);
             
-        var user = httpContextAccessor.HttpContext?.User;
+        var email = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
         
-        if (user is null || !user.Identity?.IsAuthenticated == true)
+        if (User.Identity?.IsAuthenticated == true || string.IsNullOrWhiteSpace(email))
         {
             logger.LogWarning("Unauthorized access attempt to register patient.");
             actity?.SetStatus(ActivityStatusCode.Error, "User is not authenticated.");
             return TypedResults.Unauthorized();
         }
         
-        var firstName = user.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value;
-        var lastName = user.Claims.FirstOrDefault(c => c.Type == "family_name")?.Value;
-        var email = user.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-        
-        var command = new RegisterPatientCommand(firstName, lastName, req.DateOfBirth, email, req.MedicareNumber, req.MedicareReference);
+        var command = new RegisterPatientCommand(req.FirstName, req.LastName, req.DateOfBirth, email, req.MedicareNumber, req.MedicareReference);
 
         var result = await command.ExecuteAsync(ct);
         
@@ -53,6 +49,8 @@ public class RegisterPatientEndPoint (IHttpContextAccessor httpContextAccessor,I
 }
 
 public sealed record RegisterPatientRequest(
+    string FirstName,
+    string LastName,
     DateOnly DateOfBirth,
     string MedicareNumber,
     int MedicareReference

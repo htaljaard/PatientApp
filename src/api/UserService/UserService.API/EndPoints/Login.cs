@@ -47,6 +47,7 @@ internal sealed class Login(UserManager<ApplicationUser> userManager, IOptions<J
 
         List<Claim> claims =
         [
+            
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
             new Claim(JwtRegisteredClaimNames.Email, user.Email??string.Empty),
             ..roles.Select(r => new Claim(ClaimTypes.Role, r))
