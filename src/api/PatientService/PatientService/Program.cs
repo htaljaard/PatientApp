@@ -66,7 +66,7 @@ builder.Services.AddAuthorization(options => {
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IPatientReadOnlyRepository, PatientNpgRepository>();
+builder.Services.AddScoped<IPatientRepository, PatientNpgRepository>();
 
 var app = builder.Build();
 

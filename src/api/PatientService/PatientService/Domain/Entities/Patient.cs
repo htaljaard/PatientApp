@@ -1,5 +1,8 @@
-﻿using PatientApp.SharedKernel.Domain;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using PatientApp.SharedKernel.Domain;
 using PatientApp.SharedKernel.Results;
+using PatientService.API.Domain.Events;
 using PatientService.API.Domain.ValueObjects;
 
 namespace PatientService.API.Domain.Entities;
@@ -14,7 +17,7 @@ internal sealed class Patient: Entity
     public int Age => DateTime.Today.Year - DateOfBirth.Year - (DateTime.Today.DayOfYear < DateOfBirth.DayOfYear ? 1 : 0);
 
     public MedicalAidDetails? MedicalAidDetails { get; } = new();
-
+    
     public Result<PrivateHealthFundAccount> AddPrivateHealthFuncAccount(string ProviderName, string AccountNumber)
     {
         var existingAccount = MedicalAidDetails?.PrivateHealthFundAccounts
@@ -45,5 +48,23 @@ internal sealed class Patient: Entity
         MedicalAidDetails!.MedicareCardNumber = medicareCardNumber;
         MedicalAidDetails.MedicareCardReferenceNumber = medicareCardReferenceNumber;
         return true;
+    }
+    
+    public static Patient Create(string firstName, string lastName, DateOnly dateOfBirth, string email,
+        string medicareNumber, int medicareReference)
+    {
+        var patient = new Patient()
+        {
+            FirstName =  firstName,
+            LastName = lastName,
+            DateOfBirth = dateOfBirth,
+            Email = email
+        };
+
+        patient.AddMedicareDetails(medicareNumber, medicareReference);
+        
+        patient.AddDomainEvent(new NewPatientRegisteredEvent(PatientId:patient.Id,Email:patient.Email));
+        
+        return patient;
     }
 }

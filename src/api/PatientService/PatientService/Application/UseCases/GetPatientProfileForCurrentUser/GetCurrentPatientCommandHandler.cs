@@ -7,7 +7,7 @@ using PatientService.API.Domain.Repositories;
 namespace PatientService.API.Application.UseCases.GetPatientProfileForCurrentUser;
 
 internal sealed class
-    GetCurrentPatientCommandHandler(IPatientReadOnlyRepository repository, ActivitySource activitySource)
+    GetCurrentPatientCommandHandler(IPatientRepository repository, ActivitySource activitySource)
     : ICommandHandler<GetCurrentPatientCommand, Result<PatientProfileDto>>
 {
     public async Task<Result<PatientProfileDto>> ExecuteAsync(GetCurrentPatientCommand command, CancellationToken ct)

@@ -1,5 +1,6 @@
 using PatientApp.Aspire.AppHost.Extensions;
 
+#pragma warning disable ASPIREPROXYENDPOINTS001
 var builder = DistributedApplication.CreateBuilder(args);
 
 var databaseName = "patientappdb";
@@ -10,7 +11,7 @@ var creationScript = $$"""
 
                        """;
 
-#pragma warning disable ASPIREPROXYENDPOINTS001
+
 var dbServer = builder
     .AddPostgres("postgres")
     .WithHostPort(5432)
@@ -18,7 +19,6 @@ var dbServer = builder
     .WithPgWeb()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithEndpointProxySupport(false)
-#pragma warning restore ASPIREPROXYENDPOINTS001
     .WithDataVolume("patientapp-data")
     .WithPassword(password);
 var db = dbServer.AddDatabase(databaseName).WithCreationScript(creationScript);
@@ -37,3 +37,6 @@ var patientService = builder.AddProject<Projects.PatientService_API>("patient-se
 
 
 builder.Build().Run();
+
+
+#pragma warning restore ASPIREPROXYENDPOINTS001

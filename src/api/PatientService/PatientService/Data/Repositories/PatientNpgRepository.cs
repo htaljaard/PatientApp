@@ -1,5 +1,4 @@
 ﻿using OpenTelemetry.Trace;
-using PatientApp.SharedKernel.Domain.Repository;
 using PatientApp.SharedKernel.Results;
 using PatientService.API.Domain.Entities;
 using System.Diagnostics;
@@ -9,56 +8,16 @@ using PatientService.API.Domain.Repositories;
 namespace PatientService.API.Data.Repositories;
 
 internal class PatientNpgRepository(PatientDbContext dbContext, ILogger<PatientNpgRepository> logger, ActivitySource source) 
-    : IRepository<Patient>, IPatientReadOnlyRepository
+    : IPatientRepository
 {
-    public async Task<Patient> AddAsync(Patient entity)
-    {
-        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.AddAsync")!;
-        activity.AddTag("patient.id", entity.Id.ToString());
-        activity.AddTag("patient.email", entity.Email);
-
-        try
-        {
-            var newPatient = await dbContext.AddAsync(entity);
-            return newPatient.Entity;
-        }
-        catch (Exception ex)
-        {
-
-            logger.LogError("Error occured saving patient with id: {Id}", entity.Id);
-            logger.LogError("Exception: {Exception}", ex.ToString());
-            activity.SetStatus(Status.Error.WithDescription(ex.Message));
-            throw;
-        }
-    }
-
-    public Task<bool> DeleteAsync(Patient entity)
-    {
-        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.DeleteAsync")!;
-
-        activity.AddTag("patient.id", entity.Id.ToString());
-        try
-        {
-            dbContext.Remove(entity);
-            return Task.FromResult(true);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("Error occured deleting patient with id: {Id}", entity.Id);
-            logger.LogError("Exception: {Exception}", ex.ToString());
-            activity.SetStatus(Status.Error.WithDescription(ex.Message));
-            throw;
-        }
-    }
-
-    public async Task<Result<bool>> SaveChangesAsync()
+    public async Task<Result<bool>> SaveChangesAsync(CancellationToken ct)
     {
         var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.SaveChangesAsync")!;
 
         activity.AddEvent(new ActivityEvent("SQLRepository.SaveChangesAsync started"));
         try
         {
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(ct);
             return Result.Success(true);
         }
         catch (Exception ex)
@@ -68,31 +27,6 @@ internal class PatientNpgRepository(PatientDbContext dbContext, ILogger<PatientN
             return Result.Failure<bool>(ex.Message);
         }
     }
-
-    public Task<Patient> UpdateAsync(Patient entity)
-    {
-        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.UpdateAsync")!;
-        activity.AddTag("patient.id", entity.Id.ToString());
-        try
-        {
-            var updatedPatient = dbContext.Update(entity);
-            return Task.FromResult(updatedPatient.Entity);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("Error occured updating patient with id: {Id}", entity.Id);
-            logger.LogError("Exception: {Exception}", ex.ToString());
-            activity.SetStatus(Status.Error.WithDescription(ex.Message));
-            throw;
-        }
-    }
-
-    Task<IEnumerable<Patient>> IReadOnlyRepository<Patient>.GetAllAsync()
-    {
-        throw new NotImplementedException();
-        //This is not needed at this stage
-    }
-
     public async Task<Result<Patient>> GetByEmailAsync(string email, CancellationToken ct)
     {
         var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.GetByEmailAsync")!;
@@ -118,24 +52,31 @@ internal class PatientNpgRepository(PatientDbContext dbContext, ILogger<PatientN
         }
     }
 
-    Task<Patient?> IReadOnlyRepository<Patient>.GetByIdAsync(Guid id)
+    public async Task<Result<Patient>> AddAsync(Patient patient, CancellationToken ct)
     {
-        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.GetByIdAsync")!;
+        var activity = Activity.Current ?? source.StartActivity($"{nameof(PatientService)}.Repository.AddAsync")!;
+        activity.AddTag("patient.id", patient.Id.ToString());
+        activity.AddTag("patient.email", patient.Email);
 
-        activity.AddTag("patient.id", id.ToString());
         try
         {
-            var patient = dbContext.Patients.Find(id);
-            return Task.FromResult(patient);
+            var newPatient = await dbContext.AddAsync(patient, ct);
+            return newPatient.Entity;
         }
         catch (Exception ex)
         {
-            logger.LogError("Error occured retrieving patient with id: {Id}", id);
+
+            logger.LogError("Error occured saving patient with email: {email}",patient.Email);
             logger.LogError("Exception: {Exception}", ex.ToString());
             activity.SetStatus(Status.Error.WithDescription(ex.Message));
             throw;
         }
     }
 
+    
 
+    public Task<Result<Patient>> UpdateAsync(Patient patient, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
 }
