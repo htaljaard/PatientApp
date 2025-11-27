@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PatientApp.SharedKernel.Events;
 using PatientService.API.Domain.Entities;
 
 namespace PatientService.API.Data.Configuration;

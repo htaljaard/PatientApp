@@ -61,6 +61,7 @@ internal class PatientNpgRepository(PatientDbContext dbContext, ILogger<PatientN
         try
         {
             var newPatient = await dbContext.AddAsync(patient, ct);
+            var saveResult = await SaveChangesAsync(ct);
             return newPatient.Entity;
         }
         catch (Exception ex)

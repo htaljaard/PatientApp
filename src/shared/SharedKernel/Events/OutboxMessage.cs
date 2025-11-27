@@ -15,6 +15,9 @@ public class OutboxMessage<T> where T : IDomainEvent
     public bool Processed { get; init; } = false;
     public DateTime? ProcessedOn { get; init; }
 
+    public OutboxMessage()
+    {
+    }
 
     public OutboxMessage(T value)
     {

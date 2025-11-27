@@ -7,6 +7,7 @@ using PatientService.API.Data;
 using PatientService.API.Data.Repositories;
 using PatientService.API.Domain.Repositories;
 using Scalar.AspNetCore;
+using Microsoft.EntityFrameworkCore; // added for Database.MigrateAsync
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +76,23 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+    
+    // Apply EF Core migrations automatically in Development environment.
+    // This ensures the local dev database is brought up-to-date when the app starts.
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var db = services.GetRequiredService<PatientDbContext>();
+        await db.Database.MigrateAsync();
+        logger.LogInformation("Database migrations applied successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while migrating the database.");
+        throw;
+    }
 }
 
 app.UseAuthentication();

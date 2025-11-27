@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Security.Claims;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,22 +10,22 @@ using PatientService.API.Application.UseCases.RegisterPatient;
 namespace PatientService.API.EndPoints;
 
 [Authorize(policy:"IsPatient")]
-public class RegisterPatientEndPoint (IHttpContextAccessor httpContextAccessor,ILogger<RegisterPatientEndPoint> logger,
+public class RegisterPatientEndPoint (ILogger<RegisterPatientEndPoint> logger,
     ActivitySource source): Endpoint<RegisterPatientRequest,
     Results<Ok<PatientProfileDto>, BadRequest, UnauthorizedHttpResult>>
 {
     public override void Configure()
     {
-        Post("api/patient/register");
+        Post("/api/patient/register");
     }
 
     public override async Task<Results<Ok<PatientProfileDto>, BadRequest, UnauthorizedHttpResult>> ExecuteAsync(RegisterPatientRequest req, CancellationToken ct)
     {
         var actity = source.StartActivity($"{nameof(RegisterPatientEndPoint)}.{nameof(ExecuteAsync)}", ActivityKind.Server);
             
-        var email = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+        var email = User.Claims.FirstOrDefault(c => c.Type ==ClaimTypes.Email)?.Value;
         
-        if (User.Identity?.IsAuthenticated == true || string.IsNullOrWhiteSpace(email))
+        if (User.Identity?.IsAuthenticated == false || string.IsNullOrWhiteSpace(email))
         {
             logger.LogWarning("Unauthorized access attempt to register patient.");
             actity?.SetStatus(ActivityStatusCode.Error, "User is not authenticated.");
@@ -47,12 +48,3 @@ public class RegisterPatientEndPoint (IHttpContextAccessor httpContextAccessor,I
         return TypedResults.Ok(result.Value!);
     }
 }
-
-public sealed record RegisterPatientRequest(
-    string FirstName,
-    string LastName,
-    DateOnly DateOfBirth,
-    string MedicareNumber,
-    int MedicareReference
-);
-

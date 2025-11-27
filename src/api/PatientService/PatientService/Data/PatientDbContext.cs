@@ -12,6 +12,7 @@ internal sealed class PatientDbContext : DbContext
     public DbSet<Patient> Patients { get; set; }
 
     public DbSet<MedicalAidDetails> MedicalAidDetails { get; set; }
+    public DbSet<OutboxMessage<IDomainEvent>> OutboxMessages { get; set; }
 
     public PatientDbContext(DbContextOptions<PatientDbContext> options) : base(options)
     {
