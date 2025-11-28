@@ -3,7 +3,6 @@ using PatientApp.SharedKernel.Domain;
 using PatientApp.SharedKernel.Events;
 using PatientService.API.Domain.Entities;
 using PatientService.API.Domain.ValueObjects;
-using System.Text.Json;
 
 namespace PatientService.API.Data;
 
@@ -33,13 +32,11 @@ internal sealed class PatientDbContext : DbContext
             .ToList();
 
         var outboxEntries = new List<OutboxMessage<IDomainEvent>>();
-        var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
         foreach (var entity in domainEntities)
         {
             foreach (var domainEvent in entity.DomainEvents)
             {
-                var eventType = domainEvent.GetType();
                 var outboxMessage = new OutboxMessage<IDomainEvent>(domainEvent);
 
                 outboxEntries.Add(outboxMessage);

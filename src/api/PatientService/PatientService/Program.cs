@@ -2,12 +2,15 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Web;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using PatientService.API.Data;
 using PatientService.API.Data.Repositories;
 using PatientService.API.Domain.Repositories;
 using Scalar.AspNetCore;
-using Microsoft.EntityFrameworkCore; // added for Database.MigrateAsync
+using Microsoft.EntityFrameworkCore;
+using PatientService.API.Application.Processors; // added for Database.MigrateAsync
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,14 +22,11 @@ builder.Services.AddOpenApi();
 builder.Services.AddFastEndpoints();
 builder.AddServiceDefaults();
 
-
-
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
 
 ArgumentException.ThrowIfNullOrWhiteSpace(jwtKey, "JWT Key is not configured.");
-
 
 builder.Services.AddAuthentication(options => {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,8 +67,19 @@ builder.Services.AddAuthorization(options => {
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IPatientRepository, PatientNpgRepository>();
+builder.Services.Configure<MassTransitHostOptions>(options => {
+    options.WaitUntilStarted = true;
+});
+var messagingConnectionString = builder.Configuration.GetConnectionString("rabbitMQ");
+builder.Services.AddMassTransit(config => {
+    config.UsingRabbitMq((ctx, cfg) => {
+        //Masstransit errors with some special characters in connection string
+        cfg.Host(messagingConnectionString); 
+    });
+});
 
+builder.Services.AddScoped<IPatientRepository, PatientNpgRepository>();
+builder.Services.AddHostedService<OutboxProcessor>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -76,23 +87,6 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-    
-    // Apply EF Core migrations automatically in Development environment.
-    // This ensures the local dev database is brought up-to-date when the app starts.
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    // try
-    // {
-    //     var db = services.GetRequiredService<PatientDbContext>();
-    //     await db.Database.MigrateAsync();
-    //     logger.LogInformation("Database migrations applied successfully.");
-    // }
-    // catch (Exception ex)
-    // {
-    //     logger.LogError(ex, "An error occurred while migrating the database.");
-    //     throw;
-    // }
 }
 
 app.UseAuthentication();
