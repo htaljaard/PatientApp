@@ -82,17 +82,17 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     var logger = services.GetRequiredService<ILogger<Program>>();
-    try
-    {
-        var db = services.GetRequiredService<PatientDbContext>();
-        await db.Database.MigrateAsync();
-        logger.LogInformation("Database migrations applied successfully.");
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while migrating the database.");
-        throw;
-    }
+    // try
+    // {
+    //     var db = services.GetRequiredService<PatientDbContext>();
+    //     await db.Database.MigrateAsync();
+    //     logger.LogInformation("Database migrations applied successfully.");
+    // }
+    // catch (Exception ex)
+    // {
+    //     logger.LogError(ex, "An error occurred while migrating the database.");
+    //     throw;
+    // }
 }
 
 app.UseAuthentication();

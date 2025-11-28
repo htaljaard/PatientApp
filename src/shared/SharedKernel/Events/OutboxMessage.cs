@@ -21,7 +21,7 @@ public class OutboxMessage<T> where T : IDomainEvent
 
     public OutboxMessage(T value)
     {
-        Type = typeof(T).Name;
+        Type = value.GetType().Name;
         Payload = JsonSerializer.Serialize(value, value.GetType());
         OccurredOn = DateTime.UtcNow;
     }
